@@ -1,6 +1,229 @@
-<audio id="audio-rain" loop src="sounds/lluvia.mp3"></audio>
-<audio id="audio-birds" loop src="sounds/pajaros.mp3"></audio>
-<audio id="audio-wind" loop src="sounds/viento.mp3"></audio>
-<audio id="audio-bells" loop src="sounds/campanas.mp3"></audio>
-<audio id="audio-crickets" loop src="sounds/grillos.mp3"></audio>
-<audio id="audio-owls" loop src="sounds/buho.mp3"></audio>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Soundscape 🌸 Lavender Edition</title>
+    <style>
+        :root {
+            /* Colores Modo Noche (Default) */
+            --bg-gradient: linear-gradient(180deg, #2e1a47 0%, #1a0933 100%);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-hover: rgba(255, 255, 255, 0.2);
+            --accent: #b39ddb;
+            --text-color: #ffffff;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .day-mode {
+            /* Colores Modo Día */
+            --bg-gradient: linear-gradient(180deg, #f3e5f5 0%, #d1c4e9 100%);
+            --card-bg: rgba(255, 255, 255, 0.4);
+            --card-hover: rgba(255, 255, 255, 0.6);
+            --accent: #7e57c2;
+            --text-color: #4a148c;
+            --shadow: 0 8px 32px 0 rgba(149, 117, 205, 0.2);
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            transition: all 0.8s ease;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* --- BOTÓN DE CAMBIO DE MODO --- */
+        .mode-toggle {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: 0.3s;
+        }
+
+        .mode-toggle:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* --- GRID DE SONIDOS --- */
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 160px);
+            gap: 20px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card:hover {
+            background: var(--card-hover);
+            transform: translateY(-5px);
+        }
+
+        .card.active {
+            border: 2px solid white;
+            box-shadow: 0 0 25px var(--accent);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .icon {
+            font-size: 45px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        /* --- NOTAS MUSICALES ANIMADAS --- */
+        .music-note {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            font-size: 24px;
+            color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .active .music-note {
+            animation: floatNote 2s infinite ease-out;
+        }
+
+        @keyframes floatNote {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: translateY(-60px) rotate(45deg); opacity: 0; }
+        }
+
+        /* --- CONTROLES DE VOLUMEN --- */
+        .vol-slider {
+            width: 100%;
+            margin-top: 15px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Zen Garden Soundscape</h1>
+    
+    <button class="mode-toggle" onclick="toggleTheme()">☀️ / 🌙 Cambiar Ambiente</button>
+
+    <div class="sound-grid">
+        <div class="card" id="card-rain" onclick="handleInteraction('rain')">
+            <span class="music-note">♪</span>
+            <span class="icon">🏠</span>
+            <span class="label">Lluvia Teja</span>
+            <input type="range" class="vol-slider" id="vol-rain" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
+        </div>
+
+        <div class="card" id="card-birds" onclick="handleInteraction('birds')">
+            <span class="music-note">♫</span>
+            <span class="icon">🐦</span>
+            <span class="label">Pajaritos</span>
+            <input type="range" class="vol-slider" id="vol-birds" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
+        </div>
+
+        <div class="card" id="card-wind" onclick="handleInteraction('wind')">
+            <span class="music-note">♬</span>
+            <span class="icon">🍃</span>
+            <span class="label">Brisa</span>
+            <input type="range" class="vol-slider" id="vol-wind" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
+        </div>
+
+        <div class="card" id="card-bells" onclick="handleInteraction('bells')">
+            <span class="music-note">♩</span>
+            <span class="icon">🎐</span>
+            <span class="label">Campanas</span>
+            <input type="range" class="vol-slider" id="vol-bells" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
+        </div>
+
+        <div class="card" id="card-crickets" onclick="handleInteraction('crickets')">
+            <span class="music-note">♪</span>
+            <span class="icon">🦗</span>
+            <span class="label">Grillos</span>
+            <input type="range" class="vol-slider" id="vol-crickets" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
+        </div>
+
+        <div class="card" id="card-owls" onclick="handleInteraction('owls')">
+            <span class="music-note">♫</span>
+            <span class="icon">🦉</span>
+            <span class="label">Búhos</span>
+            <input type="range" class="vol-slider" id="vol-owls" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <audio id="audio-rain" loop src="sounds/lluvia.mp3"></audio>
+    <audio id="audio-birds" loop src="sounds/pajaritos.mp3"></audio>
+    <audio id="audio-wind" loop src="sounds/brisa.mp3"></audio>
+    <audio id="audio-bells" loop src="sounds/campanas.mp3"></audio>
+    <audio id="audio-crickets" loop src="sounds/grillos.mp3"></audio>
+    <audio id="audio-owls" loop src="sounds/buhos.mp3"></audio>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('day-mode');
+        }
+
+        function handleInteraction(id) {
+            const audio = document.getElementById('audio-' + id);
+            const card = document.getElementById('card-' + id);
+            const slider = document.getElementById('vol-' + id);
+
+            // Sincronizar volumen con el slider
+            audio.volume = slider.value;
+
+            if (audio.paused) {
+                audio.play();
+                card.classList.add('active');
+            } else {
+                audio.pause();
+                card.classList.remove('active');
+            }
+
+            // Actualizar volumen en tiempo real si mueven el slider mientras suena
+            slider.oninput = () => {
+                audio.volume = slider.value;
+            };
+        }
+    </script>
+</body>
+</html>
