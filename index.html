@@ -36,7 +36,6 @@
             position: relative;
         }
 
-        /* Capa para mejorar visibilidad */
         body::before {
             content: "";
             position: absolute;
@@ -79,27 +78,32 @@
 
         .card.active {
             border-color: #fff;
-            box-shadow: 0 0 20px var(--accent);
+            box-shadow: 0 0 25px #b39ddb; /* Morado neón */
             transform: scale(1.05);
         }
 
         .icon { font-size: 40px; display: block; margin-bottom: 10px; }
 
-        /* Animación de notas */
+        /* NOTITAS MUSICALES MORADO NEÓN */
         .music-note {
             position: absolute;
             top: 5px; right: 10px;
-            font-size: 20px;
+            font-size: 24px;
+            color: #e1bee7;
+            text-shadow: 0 0 10px #b39ddb, 0 0 20px #7e57c2;
             opacity: 0;
             pointer-events: none;
         }
 
-        .active .music-note { animation: float 2s infinite; opacity: 1; }
+        .active .music-note { 
+            animation: floatNote 1.5s infinite ease-out;
+            opacity: 1; 
+        }
 
-        @keyframes float {
-            0% { transform: translateY(0); opacity: 0; }
+        @keyframes floatNote {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
             50% { opacity: 1; }
-            100% { transform: translateY(-40px); opacity: 0; }
+            100% { transform: translateY(-50px) scale(1.2); opacity: 0; }
         }
 
         .vol-slider { width: 100%; margin-top: 10px; accent-color: var(--accent); }
@@ -136,17 +140,17 @@
         </div>
 
         <div class="card" id="card-owls" onclick="toggleSound('owls')">
-            <span class="music-note">♫</span><span class="icon">🦉</span><span>Búhos</span>
+            <span class="music-note">♫</span><span class="icon">🦉</span><span>Búho</span>
             <input type="range" class="vol-slider" id="vol-owls" min="0" max="1" step="0.1" value="0.5" onclick="event.stopPropagation()">
         </div>
     </div>
 
-    <audio id="audio-rain" loop src="sounds/lluvia.mp3"></audio>
-    <audio id="audio-birds" loop src="sounds/pajaritos.mp3"></audio>
-    <audio id="audio-wind" loop src="sounds/brisa.mp3"></audio>
-    <audio id="audio-bells" loop src="sounds/campanas.mp3"></audio>
-    <audio id="audio-crickets" loop src="sounds/grillos.mp3"></audio>
-    <audio id="audio-owls" loop src="sounds/buhos.mp3"></audio>
+    <audio id="audio-rain" loop src="lluvia.mp3"></audio>
+    <audio id="audio-birds" loop src="pajaros.mp3"></audio>
+    <audio id="audio-wind" loop src="viento.mp3"></audio>
+    <audio id="audio-bells" loop src="campanas.mp3"></audio>
+    <audio id="audio-crickets" loop src="grillos.mp3"></audio>
+    <audio id="audio-owls" loop src="buho.mp3"></audio>
 
     <script>
         function toggleSound(id) {
@@ -157,17 +161,14 @@
             audio.volume = slider.value;
 
             if (audio.paused) {
-                audio.play().then(() => {
-                    card.classList.add('active');
-                }).catch(e => console.error("Error al reproducir:", e));
+                audio.play().catch(e => console.log("Error al cargar sonido:", e));
+                card.classList.add('active'); // Activa notas y brillo
             } else {
                 audio.pause();
-                card.classList.remove('active');
+                card.classList.remove('active'); // Desactiva notas y brillo
             }
 
-            slider.oninput = (e) => {
-                audio.volume = e.target.value;
-            };
+            slider.oninput = (e) => { audio.volume = e.target.value; };
         }
     </script>
 </body>
